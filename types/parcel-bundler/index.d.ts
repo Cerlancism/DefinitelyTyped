@@ -4,8 +4,10 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.1
 
-declare namespace ParcelBundler {
-    interface ParcelOptions {
+declare namespace ParcelBundler
+{
+    interface ParcelOptions
+    {
         /**
          * The out directory to put the build files in
          *
@@ -70,22 +72,22 @@ declare namespace ParcelBundler {
          * Use true to generate one or false to use http
          */
         https?:
-            | true
-            | false
-            | {
-                  /**
-                   * Path to custom certificate
-                   *
-                   * @default "./ssl/c.crt"
-                   */
-                  cert?: string;
-                  /**
-                   * Path to custom key
-                   *
-                   * @default "./ssl/k.key"
-                   */
-                  key?: string;
-              };
+        | true
+        | false
+        | {
+            /**
+             * Path to custom certificate
+             *
+             * @default "./ssl/c.crt"
+             */
+            cert?: string;
+            /**
+             * Path to custom key
+             *
+             * @default "./ssl/k.key"
+             */
+            key?: string;
+        };
         /**
          * 3 = log everything, 2 = log warnings & errors, 1 = log errors
          *
@@ -126,7 +128,8 @@ declare namespace ParcelBundler {
 
     type ParcelAsset = any;
 
-    interface ParcelBundle {
+    interface ParcelBundle
+    {
         /**
          * The type of assets it contains (e.g. js, css, map, ...)
          */
@@ -162,7 +165,15 @@ declare namespace ParcelBundler {
     }
 }
 
-declare class ParcelBundler {
+type BundlerEvent = 'bundled' | 'buildEnd' | 'buildStart' | 'buildError'
+type BundlerEventCallback<T extends BundlerEvent> = (sender: T extends 'bundled'
+    ? ParcelBundler.ParcelBundle : T extends 'buildEnd'
+    ? void : T extends 'buildStart'
+    ? string | string[] : T extends 'buildError'
+    ? Error : never) => void
+
+declare class ParcelBundler
+{
     constructor(
         entryFiles?: string | string[],
         options?: ParcelBundler.ParcelOptions
@@ -173,6 +184,9 @@ declare class ParcelBundler {
     addPackager(type: string, packager: string): void;
 
     bundle(): Promise<ParcelBundler.ParcelBundle>;
+    serve(): Promise<ParcelBundler.ParcelBundle>;
+
+    on<T extends BundlerEvent>(event: T, callback: BundlerEventCallback<T>): void
 }
 
 export = ParcelBundler;
